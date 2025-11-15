@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        LOCAL_REPO = '/srv/5etools'
+        LOCAL_REPO = '${WORKSPACE}/5etools'
         GIT_REPO = 'https://github.com/5etools-mirror-3/5etools-src.git'
         NAME_IMAGE = '5etools-image:latest'
     }
