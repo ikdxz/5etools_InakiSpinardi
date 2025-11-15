@@ -1,4 +1,6 @@
-FROM jafner/5etools-docker
-COPY . /usr/local/apache2/htdocs
-WORKDIR /usr/local/apache2/htdocs
-EXPOSE 80
+FROM node:17-alpine
+WORKDIR /app
+COPY . .
+RUN npm install -g http-server
+CMD ["http-server", "-p", "5050", "-a", "0.0.0.0"]
+EXPOSE 5050

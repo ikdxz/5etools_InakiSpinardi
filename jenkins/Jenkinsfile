@@ -1,42 +1,47 @@
+// Necesitamos configurar un pipeline que clone el repositorio 5etools,
+// contruya en k8s y que de manera automática actualice el despliegue en k8s.
+//Cada vez que haya un cambio en el repositorio, el pipeline debe actualizar el despliegue.
+
 pipeline {
     agent any
 
     environment {
+        REPO_URL = 'https://github.com/5etools-mirror-3/5etools-src.git'
         LOCAL_REPO = '5etools-src'
-        GIT_REPO = 'https://github.com/5etools-mirror-3/5etools-src.git'
-        NAME_IMAGE = '5etools-image:latest'
+        IMAGE_NAME = 'inaki/5etools:latest'
+
     }
 
     stages {
-        stage('Clonación o Actualización del Repositorio') {
+
+        stage('Clonar repositorio') {
             steps {
                 sh '''
-                    if [ ! -d "$LOCAL_REPO" ]; then
-                        git clone $GIT_REPO
+                    if [ -d "$LOCAL_REPO" ]; then
+                        cd $LOCAL_REPO && git pull
                     else
-                        cd $LOCAL_REPO
-                        git pull origin main
+                        git clone $REPO_URL 
                     fi
                 '''
             }
         }
-
-        stage('Construcción del Proyecto') {
+        stage('Construir imagen Docker') {
             steps {
                 sh '''
                     cd $LOCAL_REPO
-                    mv ../Dockerfile .
-                    docker build -t $NAME_IMAGE .
+                    mv ../Dockerfile . 
+                    docker build -t $IMAGE_NAME .
+                '''
+            }
+        }
+        stage('Desplegar en Kubernetes') {
+            steps {
+                sh '''
+                    kubectl set image deployment/5etools-deployment 5etools-container=$IMAGE_NAME --record
                 '''
             }
         }
 
-        stage('Deployment con Kubernetes') {
-            steps {
-                sh '''
-                    kubectl set image deployment/5etools-deployment 5etools-container=$NAME_IMAGE --record
-                '''
-            }
-        }
     }
+
 }

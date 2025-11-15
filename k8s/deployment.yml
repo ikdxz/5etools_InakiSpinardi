@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: 5etools
-        image: inaki/5etools-web:latest
+        image: prueba
         ports:
-        - containerPort: 80
+        - containerPort: 5050

@@ -9,4 +9,5 @@ spec:
   selector:
     app: 5etools
   ports:
-      port: 80
+      port: 9000
+      targetPort: 5050
