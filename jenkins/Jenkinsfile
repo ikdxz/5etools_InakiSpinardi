@@ -38,7 +38,7 @@ pipeline {
         stage('Desplegar en Kubernetes') {
             steps {
                 sh '''
-                    kubectl set image deployment/5etools-deployment 5etools-container=$IMAGE_NAME --record
+                docker run --name 5etools-container -d -p 3030:5050 $IMAGE_NAME
                 '''
             }
         }
