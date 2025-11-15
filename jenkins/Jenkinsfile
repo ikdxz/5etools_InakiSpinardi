@@ -1,5 +1,6 @@
 pipeline {
-    agent { label 'docker-node' }
+    agent {
+        docker { image 'node:24.11.0-alpine3.22' }
 
     environment {
         LOCAL_REPO = '5etools'
