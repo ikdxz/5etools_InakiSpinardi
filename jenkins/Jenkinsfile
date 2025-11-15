@@ -1,5 +1,5 @@
 pipeline {
-    agent { any }
+    agent any
 
     environment {
         LOCAL_REPO = '5etools'
