@@ -9,6 +9,7 @@ pipeline {
         REPO_URL = 'https://github.com/5etools-mirror-3/5etools-src.git'
         LOCAL_REPO = '5etools-src'
         IMAGE_NAME = 'inaki/5etools:latest'
+        KUBECONFIG = '/var/jenkins_home/.kube/config'
 
     }
 
