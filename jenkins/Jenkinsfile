@@ -11,7 +11,7 @@ pipeline {
         stage('Clonación o Actualización del Repositorio') {
             steps {
                 sh '''
-                    if [ ! -d "./$LOCAL_REPO" ]; then
+                    if [ ! -d "$LOCAL_REPO" ]; then
                         git clone $GIT_REPO .
                         cd $LOCAL_REPO
                     else
