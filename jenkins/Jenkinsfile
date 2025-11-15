@@ -11,7 +11,7 @@ pipeline {
         REPO_URL = 'https://github.com/ikdxz/5etools_InakiSpinardi.git'
         LOCAL_REPO = '5etools-src'
         IMAGE_NAME = 'inaki/5etools:latest'
-        KUBECONFIG = '/var/jenkins_home/.kube/config'
+        KUBECONFIG = '/var/jenkins_home/.kube/config-k8s'
 
     }
 
