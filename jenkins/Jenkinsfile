@@ -25,6 +25,7 @@ pipeline {
             steps {
                 sh '''
                     cd $LOCAL_REPO
+                    mv ../Dockerfile .
                     docker build -t $NAME_IMAGE .
                 '''
             }
