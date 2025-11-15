@@ -38,7 +38,7 @@ pipeline {
         stage('Desplegar en Kubernetes') {
             steps {
                 sh '''
-                docker run --name 5etools-container -d -p 3030:5050 $IMAGE_NAME
+                docker run --name 5etools-container -d -p 9090:5050 $IMAGE_NAME
                 '''
             }
         }
