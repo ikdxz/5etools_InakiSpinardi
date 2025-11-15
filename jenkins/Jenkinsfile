@@ -1,13 +1,14 @@
 pipeline {
     agent any
 
-    enviroment {
-        LOCAL_REPO = '/svr/5etoools'
+    environment {
+        LOCAL_REPO = '/srv/5etools'
         GIT_REPO = 'https://github.com/5etools-mirror-3/5etools-src.git'
-        NAME_IMAGE = '5etoools-image:latest'
+        NAME_IMAGE = '5etools-image:latest'
     }
+
     stages {
-        stage('Clonacion o Actualización del Repositorio') {
+        stage('Clonación o Actualización del Repositorio') {
             steps {
                 sh '''
                     if [ ! -d "$LOCAL_REPO" ]; then
@@ -19,7 +20,8 @@ pipeline {
                 '''
             }
         }
-        stage('Contrucción del Proyecto') {
+
+        stage('Construcción del Proyecto') {
             steps {
                 sh '''
                     cd $LOCAL_REPO
@@ -27,12 +29,13 @@ pipeline {
                 '''
             }
         }
-        stage('Deplyment con Kubernetes') {
+
+        stage('Deployment con Kubernetes') {
             steps {
                 sh '''
-                    kubectl set image deployment/5etoools-deployment 5etoools-container=$NAME_IMAGE --record
+                    kubectl set image deployment/5etools-deployment 5etools-container=$NAME_IMAGE --record
                 '''
-
+            }
         }
     }
 }
