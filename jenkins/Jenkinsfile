@@ -1,6 +1,8 @@
 // Necesitamos configurar un pipeline que clone el repositorio 5etools,
 // contruya en k8s y que de manera automática actualice el despliegue en k8s.
 //Cada vez que haya un cambio en el repositorio, el pipeline debe actualizar el despliegue.
+//Primero vamos a hacerlo con docker run
+//Despues, vamos a a autmoatizar el despliegue en cuanto se haga un commit al repositorio
 
 pipeline {
     agent any
@@ -13,15 +15,17 @@ pipeline {
 
     }
 
+
+
     stages {
 
         stage('Clonar repositorio') {
             steps {
                 sh '''
                     if [ -d "$LOCAL_REPO" ]; then
-                        cd $LOCAL_REPO && git pull
+                        cd $LOCAL_REPO
                     else
-                        git clone $REPO_URL 
+                        git clone $REPO_URL
                     fi
                 '''
             }
@@ -45,6 +49,7 @@ pipeline {
                 '''
             }
         }
+        sta
 
     }
 
