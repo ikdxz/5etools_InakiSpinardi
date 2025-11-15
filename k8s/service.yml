@@ -1,0 +1,12 @@
+apiVersion: apps/v1
+kind: Service
+metadata:
+  name: 5etools
+  labels:
+    app: 5etools
+spec:
+  type: LoadBalancer
+  selector:
+    app: 5etools
+  ports:
+      port: 80

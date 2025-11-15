@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: 5etools
+  labels:
+    app: 5etools
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: 5etools
+  template:
+    metadata:
+      labels:
+        app: 5etools
+    spec:
+      containers:
+      - name: 5etools
+        image: inaki/5etools-web:latest
+        ports:
+        - containerPort: 80
