@@ -13,7 +13,6 @@ pipeline {
                 sh '''
                     if [ ! -d "$LOCAL_REPO" ]; then
                         git clone $GIT_REPO
-                        cd $LOCAL_REPO
                     else
                         cd $LOCAL_REPO
                         git pull origin main
@@ -26,7 +25,6 @@ pipeline {
             steps {
                 sh '''
                     cd $LOCAL_REPO
-                    mv ../../Dockerfile .
                     docker build -t $NAME_IMAGE .
                 '''
             }
