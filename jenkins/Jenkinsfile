@@ -1,6 +1,6 @@
 pipeline {
     agent { dockerfile true}
-    }
+
 
     environment {
         LOCAL_REPO = '5etools'
