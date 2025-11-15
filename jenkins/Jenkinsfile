@@ -38,7 +38,10 @@ pipeline {
         stage('Desplegar en Kubernetes') {
             steps {
                 sh '''
-                docker run --name 5etools-container -d -p 9090:5050 $IMAGE_NAME
+                    if [ docker ps -a --format '{{.Names}}' | grep -Eq "^5etools-container\$" ]; then
+                        docker rm -f 5etools-container
+                    fi
+                        docker run --name 5etools-container -d -p 9090:5050 $IMAGE_NAME
                 '''
             }
         }
