@@ -12,9 +12,9 @@ pipeline {
             steps {
                 sh '''
                     if [ ! -d "$LOCAL_REPO" ]; then
-                        git clone $GIT_REPO $LOCAL_REPO
+                        git clone $GIT_REPO ./$LOCAL_REPO
                     else
-                        cd $LOCAL_REPO
+                        cd ./$LOCAL_REPO
                         git pull origin main
                     fi
                 '''
