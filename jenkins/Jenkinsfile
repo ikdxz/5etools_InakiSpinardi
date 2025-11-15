@@ -8,7 +8,7 @@ pipeline {
     agent any
 
     environment {
-        REPO_URL = 'https://github.com/5etools-mirror-3/5etools-src.git'
+        REPO_URL = 'https://github.com/ikdxz/5etools_InakiSpinardi.git'
         LOCAL_REPO = '5etools-src'
         IMAGE_NAME = 'inaki/5etools:latest'
         KUBECONFIG = '/var/jenkins_home/.kube/config'
@@ -25,7 +25,7 @@ pipeline {
                     if [ -d "$LOCAL_REPO" ]; then
                         cd $LOCAL_REPO
                     else
-                        git clone $REPO_URL
+                        git clone $REPO_URL && cd $LOCAL_REPO
                     fi
                 '''
             }
