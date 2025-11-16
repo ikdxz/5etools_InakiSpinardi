@@ -4,7 +4,7 @@
 
 Este ejercicio ha sido toda una **tortura** y he tenido que ir adaptándome a las condiciones que se presentaban. Debido a las interminables dificultades de usar réplicas con Kubernetes, he optado por realizar la automatización utilizando **Docker**. Estoy muy descontento con la basura de trabajo que he hecho. Además no puedo poner imagenes porque he desistalado docker y todas sus dependencias y ahora no consigo instalarlo porque tengo los repositorios de mi Arch Linux rotos como mi corazón y cabeza.  
 
-Lo único que he conseguido ha sido automatizar el despliegue cada vez que se realizan modificaciones en el repositorio. Pero da igual porque replicar esto no es fácil y como no puedo mostrar como estaba funcionando da igual porque soy gilipollas. A continuación, se detalla el procedimiento seguido y los retos superados.
+Lo único que he conseguido ha sido automatizar el despliegue cada vez que se realizan modificaciones en el repositorio. Pero da igual porque el trabajo que he hecho lo hace hasta un niño de 5 años y como no puedo mostrar como estaba funcionando da es aún más penoso lo que he hecho porque soy gilipollas. A continuación, se detalla el procedimiento seguido y los retos superados.
 
 ---
 
