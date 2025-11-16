@@ -1,50 +1,50 @@
-// Necesitamos configurar un pipeline que clone el repositorio 5etools,
-// contruya en k8s y que de manera automática actualice el despliegue en k8s.
-//Cada vez que haya un cambio en el repositorio, el pipeline debe actualizar el despliegue.
-//Primero vamos a hacerlo con docker run
-//Despues, vamos a a autmoatizar el despliegue en cuanto se haga un commit al repositorio
-
 pipeline {
     agent any
 
     environment {
-        REPO_URL = 'https://github.com/ikdxz/5etools_InakiSpinardi.git'
+        REPO_URL   = 'https://github.com/ikdxz/5etools_InakiSpinardi.git'
         LOCAL_REPO = '5etools-src'
-        IMAGE_NAME = 'inaki/5etools:latest'
-        KUBECONFIG = '/var/jenkins_home/.kube/config'
-
+        IMAGE_NAME = 'inaki/5etools'
     }
-
-
 
     stages {
 
         stage('Clonar repositorio') {
             steps {
                 sh '''
-                    if [ -d "$LOCAL_REPO" ]; then
-                        cd $LOCAL_REPO
-                    else
-                        git clone $REPO_URL
-                    fi
-                '''
+if [ -d "$LOCAL_REPO" ]; then
+  cd "$LOCAL_REPO" && git pull
+else
+  git clone "$REPO_URL" "$LOCAL_REPO"
+fi
+'''
             }
         }
+
+        stage('Obtener SHA del commit') {
+            steps {
+                script {
+                    def sha = sh(script: "cd ${env.LOCAL_REPO} && git rev-parse --short HEAD", returnStdout: true).trim()
+                    env.IMAGE_TAG = sha
+                }
+            }
+        }
+
         stage('Construir imagen Docker') {
             steps {
                 sh '''
-                    cd $LOCAL_REPO
-                    mv ../Dockerfile . 
-                    docker build -t $IMAGE_NAME .
-                '''
+cd "$LOCAL_REPO"
+mv ../Dockerfile . || true
+docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+'''
             }
         }
-stage('Desplegar en Kubernetes') {
-    steps {
-        withCredentials([string(credentialsId: 'K8S_TOKEN', variable: 'TOKEN')]) {
-            sh '''
-                # Generar kubeconfig temporal
-cat <<EOF > kubeconfig.yaml
+
+        stage('Desplegar en Kubernetes') {
+            steps {
+                withCredentials([string(credentialsId: 'K8S_TOKEN', variable: 'TOKEN')]) {
+                    sh '''
+cat > kubeconfig.yaml <<KCFG
 apiVersion: v1
 kind: Config
 clusters:
@@ -61,14 +61,18 @@ users:
 - name: jenkins
   user:
     token: $TOKEN
-EOF
+KCFG
 
-                export KUBECONFIG=$(pwd)/kubeconfig.yaml
-                kubectl set image deployment/5etools-deployment 5etools-container=$IMAGE_NAME --record
-            '''
+export KUBECONFIG=$(pwd)/kubeconfig.yaml
+kubectl set image deployment/5etools-deployment 5etools-container=${IMAGE_NAME}:${IMAGE_TAG}
+'''
+                }
+            }
         }
     }
-}
 
-
+    post {
+        success { echo "Despliegue completado: ${IMAGE_NAME}:${IMAGE_TAG}" }
+        failure { echo "Pipeline falló" }
+    }
 }
