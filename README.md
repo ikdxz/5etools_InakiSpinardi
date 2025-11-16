@@ -84,7 +84,7 @@ Este script debe estar ubicado en .git/hooks con un nombre como post-commit.
 
 Para uso global, la solución sería más compleja, incluyendo un proxy que reciba la petición de GitHub, obtenga el crumb y mande la petición a Jenkins.
 
-5. Resultados
+## 5. Resultados
 
 Servidor en localhost:5050 funcionando.
 
