@@ -39,7 +39,7 @@ pipeline {
                     if [ $(docker ps -a -q -f name=5etools-container) ]; then
                         docker rm -f 5etools-container
                     fi
-                        docker run --name 5etools-container -d -p 9090:5050 $IMAGE_NAME
+                        docker run --name 5etools-container -d -p 5050:5050 $IMAGE_NAME
                 '''
             }
         }
