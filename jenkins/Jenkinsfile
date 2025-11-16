@@ -39,18 +39,17 @@ pipeline {
                 '''
             }
         }
-        stage('Desplegar en Kubernetes') {
-            steps {
-                withCredentials([string(credentialsId: 'K8S_TOKEN', variable: 'TOKEN')]) {
-                    sh '''
-                        # Generar kubeconfig temporal
-                        cat <<EOF > kubeconfig.yaml
+stage('Desplegar en Kubernetes') {
+    steps {
+        withCredentials([string(credentialsId: 'K8S_TOKEN', variable: 'TOKEN')]) {
+            sh '''
+                # Generar kubeconfig temporal
+cat <<EOF > kubeconfig.yaml
 apiVersion: v1
 kind: Config
 clusters:
 - cluster:
     server: https://host.docker.internal:6443
-    # certificate-authority-data: <BASE64_CA>  # opcional
   name: k8s-cluster
 contexts:
 - context:
@@ -63,13 +62,13 @@ users:
   user:
     token: $TOKEN
 EOF
-                        export KUBECONFIG=$(pwd)/kubeconfig.yaml
 
-                    kubectl set image deployment/5etools-deployment 5etools-container=$IMAGE_NAME --record
-                '''
-            }
+                export KUBECONFIG=$(pwd)/kubeconfig.yaml
+                kubectl set image deployment/5etools-deployment 5etools-container=$IMAGE_NAME --record
+            '''
         }
-
     }
+}
+
 
 }
