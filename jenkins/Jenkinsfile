@@ -2,77 +2,48 @@ pipeline {
     agent any
 
     environment {
-        REPO_URL   = 'https://github.com/ikdxz/5etools_InakiSpinardi.git'
+        REPO_URL = 'https://github.com/5etools-mirror-3/5etools-src.git'
         LOCAL_REPO = '5etools-src'
-        IMAGE_NAME = 'inaki/5etools'
+        IMAGE_NAME = 'inaki/5etools:latest'
+        KUBECONFIG = '/var/jenkins_home/.kube/config'
+
     }
+
+
 
     stages {
 
         stage('Clonar repositorio') {
             steps {
                 sh '''
-if [ -d "$LOCAL_REPO" ]; then
-  cd "$LOCAL_REPO" && git pull
-else
-  git clone "$REPO_URL" "$LOCAL_REPO"
-fi
-'''
+                    if [ -d "$LOCAL_REPO" ]; then
+                        cd $LOCAL_REPO
+                    else
+                        git clone $REPO_URL
+                    fi
+                '''
             }
         }
-
-        stage('Obtener SHA del commit') {
-            steps {
-                script {
-                    def sha = sh(script: "cd ${env.LOCAL_REPO} && git rev-parse --short HEAD", returnStdout: true).trim()
-                    env.IMAGE_TAG = sha
-                }
-            }
-        }
-
         stage('Construir imagen Docker') {
             steps {
                 sh '''
-cd "$LOCAL_REPO"
-mv ../Dockerfile . || true
-docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
-'''
+                    cd $LOCAL_REPO
+                    mv ../Dockerfile . 
+                    docker build -t $IMAGE_NAME .
+                '''
             }
         }
-
         stage('Desplegar en Kubernetes') {
             steps {
-                withCredentials([string(credentialsId: 'K8S_TOKEN', variable: 'TOKEN')]) {
-                    sh '''
-cat > kubeconfig.yaml <<KCFG
-apiVersion: v1
-kind: Config
-clusters:
-- cluster:
-    server: https://host.docker.internal:6443
-  name: k8s-cluster
-contexts:
-- context:
-    cluster: k8s-cluster
-    user: jenkins
-  name: jenkins-context
-current-context: jenkins-context
-users:
-- name: jenkins
-  user:
-    token: $TOKEN
-KCFG
-
-export KUBECONFIG=$(pwd)/kubeconfig.yaml
-kubectl set image deployment/5etools-deployment 5etools-container=${IMAGE_NAME}:${IMAGE_TAG}
-'''
-                }
+                sh '''
+                    if [ $(docker ps -a -q -f name=5etools-container) ]; then
+                        docker rm -f 5etools-container
+                    fi
+                        docker run --name 5etools-container -d -p 9090:5050 $IMAGE_NAME
+                '''
             }
         }
+
     }
 
-    post {
-        success { echo "Despliegue completado: ${IMAGE_NAME}:${IMAGE_TAG}" }
-        failure { echo "Pipeline falló" }
-    }
 }
